@@ -1,0 +1,557 @@
+{% extends 'base.html' %}
+
+{% block title %}Baseynlar - Poolly{% endblock %}
+
+{% block content %}
+    <title>Poolly - Loading Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Pool Container */
+        .pool-scene {
+            position: relative;
+            width: 400px;
+            height: 250px;
+            margin-bottom: 50px;
+            perspective: 1000px;
+        }
+
+        /* Pool Water */
+        .pool-water {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #3b82f6 0%, #1e40af 100%);
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: poolRipple 3s ease-in-out infinite;
+        }
+
+        /* Water Surface Effect */
+        .water-surface {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.2) 25%, 
+                rgba(255, 255, 255, 0.4) 50%, 
+                rgba(255, 255, 255, 0.2) 75%, 
+                transparent 100%);
+            animation: waterShimmer 2s ease-in-out infinite;
+        }
+
+        /* Pool Tiles */
+        .pool-tiles {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: repeating-linear-gradient(
+                90deg,
+                #2563eb 0px,
+                #2563eb 20px,
+                #1d4ed8 20px,
+                #1d4ed8 40px
+            );
+            opacity: 0.6;
+        }
+
+        /* Swimmer */
+        .swimmer {
+            position: absolute;
+            top: 50%;
+            left: -80px;
+            width: 60px;
+            height: 30px;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+
+        .swimmer-body {
+            width: 40px;
+            height: 20px;
+            background: #fbbf24;
+            border-radius: 50%;
+            position: relative;
+            animation: swimmerMove 4s ease-in-out forwards;
+        }
+
+        .swimmer-head {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            background: #f59e0b;
+            border-radius: 50%;
+        }
+
+        .swimmer-arms {
+            position: absolute;
+            top: 50%;
+            left: -5px;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 4px;
+            background: #f59e0b;
+            border-radius: 2px;
+            animation: swimStroke 0.8s ease-in-out infinite;
+        }
+
+        /* Splash Effects */
+        .splash-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            opacity: 0;
+            animation: splashEffect 1.5s ease-out 2.5s forwards;
+        }
+
+        .splash-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #60a5fa;
+            border-radius: 50%;
+            animation: particleFloat 1.5s ease-out forwards;
+        }
+
+        .splash-particle:nth-child(1) {
+            top: 20%;
+            left: 30%;
+            animation-delay: 0.1s;
+        }
+
+        .splash-particle:nth-child(2) {
+            top: 40%;
+            right: 25%;
+            animation-delay: 0.2s;
+        }
+
+        .splash-particle:nth-child(3) {
+            bottom: 30%;
+            left: 40%;
+            animation-delay: 0.3s;
+        }
+
+        .splash-particle:nth-child(4) {
+            bottom: 20%;
+            right: 35%;
+            animation-delay: 0.4s;
+        }
+
+        .splash-particle:nth-child(5) {
+            top: 60%;
+            left: 20%;
+            animation-delay: 0.5s;
+        }
+
+        /* Water Ripples */
+        .ripple {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: rippleExpand 2s ease-out 2.5s forwards;
+        }
+
+        .ripple:nth-child(2) {
+            animation-delay: 2.7s;
+        }
+
+        .ripple:nth-child(3) {
+            animation-delay: 2.9s;
+        }
+
+        /* Logo Formation */
+        .logo-container {
+            opacity: 0;
+            animation: logoReveal 1.5s ease-out 4s forwards;
+        }
+
+        .poolly-logo {
+            font-size: 4.5rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            letter-spacing: -3px;
+            position: relative;
+            animation: logoFloat 3s ease-in-out infinite 5.5s;
+        }
+
+        .logo-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 500;
+            opacity: 0;
+            animation: subtitleFade 1s ease-out 4.5s forwards;
+        }
+
+        /* Water Drops */
+        .water-drop {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #60a5fa;
+            border-radius: 50%;
+            animation: dropFall 1s ease-in forwards;
+        }
+
+        .drop-1 {
+            top: 10%;
+            left: 25%;
+            animation-delay: 2.8s;
+        }
+
+        .drop-2 {
+            top: 15%;
+            right: 30%;
+            animation-delay: 3s;
+        }
+
+        .drop-3 {
+            top: 20%;
+            left: 60%;
+            animation-delay: 3.2s;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            opacity: 0;
+            animation: progressShow 0.5s ease-out 1s forwards;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            border-radius: 2px;
+            width: 0;
+            animation: progressFill 4s ease-out 1s forwards;
+        }
+
+        /* Animations */
+        @keyframes poolRipple {
+            0%, 100% { transform: scale(1) rotateX(0deg); }
+            50% { transform: scale(1.02) rotateX(2deg); }
+        }
+
+        @keyframes waterShimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes swimmerMove {
+            0% { 
+                left: -80px; 
+                top: 50%; 
+                transform: translateY(-50%) rotate(0deg);
+            }
+            25% { 
+                left: 120px; 
+                top: 30%; 
+                transform: translateY(-50%) rotate(-15deg);
+            }
+            50% { 
+                left: 280px; 
+                top: 60%; 
+                transform: translateY(-50%) rotate(10deg);
+            }
+            75% { 
+                left: 350px; 
+                top: 40%; 
+                transform: translateY(-50%) rotate(-5deg);
+            }
+            100% { 
+                left: 450px; 
+                top: 50%; 
+                transform: translateY(-50%) rotate(0deg);
+            }
+        }
+
+        @keyframes swimStroke {
+            0%, 100% { transform: translateY(-50%) scaleX(1); }
+            50% { transform: translateY(-50%) scaleX(1.3); }
+        }
+
+        @keyframes splashEffect {
+            0% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0);
+            }
+            50% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(1.8);
+            }
+        }
+
+        @keyframes particleFloat {
+            0% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateY(-80px) scale(0.5);
+            }
+        }
+
+        @keyframes rippleExpand {
+            0% { 
+                width: 0; 
+                height: 0; 
+                opacity: 1;
+            }
+            100% { 
+                width: 200px; 
+                height: 200px; 
+                opacity: 0;
+            }
+        }
+
+        @keyframes logoReveal {
+            0% { 
+                opacity: 0; 
+                transform: translateY(50px) scale(0.8);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes subtitleFade {
+            0% { 
+                opacity: 0; 
+                transform: translateY(20px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes dropFall {
+            0% { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateY(100px);
+            }
+        }
+
+        @keyframes progressShow {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes progressFill {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .pool-scene {
+                width: 300px;
+                height: 180px;
+            }
+
+            .poolly-logo {
+                font-size: 3rem;
+            }
+
+            .progress-container {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pool-scene {
+                width: 250px;
+                height: 150px;
+            }
+
+            .poolly-logo {
+                font-size: 2.5rem;
+            }
+
+            .logo-subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        /* Final fade out */
+        .loading-container {
+            animation: fadeOut 1s ease-in-out 6s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <!-- Pool Scene -->
+        <div class="pool-scene">
+            <div class="pool-water">
+                <div class="water-surface"></div>
+                <div class="pool-tiles"></div>
+                
+                <!-- Swimmer -->
+                <div class="swimmer">
+                    <div class="swimmer-body">
+                        <div class="swimmer-head"></div>
+                        <div class="swimmer-arms"></div>
+                    </div>
+                </div>
+                
+                <!-- Splash Effects -->
+                <div class="splash-container">
+                    <div class="splash-particle"></div>
+                    <div class="splash-particle"></div>
+                    <div class="splash-particle"></div>
+                    <div class="splash-particle"></div>
+                    <div class="splash-particle"></div>
+                </div>
+                
+                <!-- Water Ripples -->
+                <div class="ripple"></div>
+                <div class="ripple"></div>
+                <div class="ripple"></div>
+                
+                <!-- Water Drops -->
+                <div class="water-drop drop-1"></div>
+                <div class="water-drop drop-2"></div>
+                <div class="water-drop drop-3"></div>
+            </div>
+        </div>
+        
+        <!-- Logo Formation -->
+        <div class="logo-container">
+            <div class="poolly-logo">Poolly</div>
+            <div class="logo-subtitle">O'zbekistondagi eng yaxshi baseynlar</div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        // Auto redirect after animation
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 7000);
+
+        // Add some interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add more water particles dynamically
+            const poolWater = document.querySelector('.pool-water');
+            
+            // Create additional floating particles
+            for (let i = 0; i < 10; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'floating-particle';
+                particle.style.cssText = `
+                    position: absolute;
+                    width: 4px;
+                    height: 4px;
+                    background: rgba(255, 255, 255, 0.6);
+                    border-radius: 50%;
+                    top: ${Math.random() * 100}%;
+                    left: ${Math.random() * 100}%;
+                    animation: floatUp ${3 + Math.random() * 2}s ease-in-out infinite;
+                    animation-delay: ${Math.random() * 2}s;
+                `;
+                poolWater.appendChild(particle);
+            }
+            
+            // Add floating animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes floatUp {
+                    0% { 
+                        opacity: 0; 
+                        transform: translateY(20px);
+                    }
+                    50% { 
+                        opacity: 1;
+                    }
+                    100% { 
+                        opacity: 0; 
+                        transform: translateY(-20px);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+
+        // Preload next page
+        const link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = '/';
+        document.head.appendChild(link);
+    </script>
+{% endblock %}

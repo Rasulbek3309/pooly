@@ -1,0 +1,433 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ pool.name }} - Poolly{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Pool Hero Section -->
+    <section class="pool-hero-section">
+        {% if images %}
+            {% for image in images %}
+                {% if image.is_main %}
+                    <div class="hero-image" style="background-image: url('{{ image.image.url }}')"></div>
+                {% endif %}
+            {% empty %}
+                <div class="hero-image" style="background-image: url('https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg?auto=compress&cs=tinysrgb&w=1600')"></div>
+            {% endfor %}
+        {% else %}
+            <div class="hero-image" style="background-image: url('https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg?auto=compress&cs=tinysrgb&w=1600')"></div>
+        {% endif %}
+        
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h1 class="pool-title">{{ pool.name }}</h1>
+                        <p class="pool-location">
+                            <i class="fas fa-map-marker-alt me-2"></i>{{ pool.address }}
+                        </p>
+                        <div class="pool-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-users me-1"></i>{{ pool.capacity }} kishi
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-clock me-1"></i>{{ pool.opening_time|time:"H:i" }} - {{ pool.closing_time|time:"H:i" }}
+                            </span>
+                            <span class="meta-item price-highlight">
+                                <i class="fas fa-money-bill-wave me-1"></i>{{ pool.price_per_hour|floatformat:0 }} so'm/soat
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pool Details -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-5">
+                <!-- Main Content -->
+                <div class="col-lg-8">
+                    <!-- Description -->
+                    <div class="detail-card mb-4">
+                        <h3 class="section-title">
+                            <i class="fas fa-info-circle me-2 text-primary"></i>Tavsif
+                        </h3>
+                        <p class="lead">{{ pool.description }}</p>
+                    </div>
+
+                    <!-- Amenities -->
+                    <div class="detail-card mb-4">
+                        <h3 class="section-title">
+                            <i class="fas fa-star me-2 text-primary"></i>Qulayliklar
+                        </h3>
+                        <div class="row g-3">
+                            {% if pool.has_sauna %}
+                                <div class="col-md-6">
+                                    <div class="amenity-item">
+                                        <i class="fas fa-hot-tub amenity-icon"></i>
+                                        <span>Sauna</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if pool.has_cafe %}
+                                <div class="col-md-6">
+                                    <div class="amenity-item">
+                                        <i class="fas fa-coffee amenity-icon"></i>
+                                        <span>Kafe</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if pool.has_sports_area %}
+                                <div class="col-md-6">
+                                    <div class="amenity-item">
+                                        <i class="fas fa-dumbbell amenity-icon"></i>
+                                        <span>Sport maydoni</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if pool.has_parking %}
+                                <div class="col-md-6">
+                                    <div class="amenity-item">
+                                        <i class="fas fa-car amenity-icon"></i>
+                                        <span>Bepul parking</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if pool.has_wifi %}
+                                <div class="col-md-6">
+                                    <div class="amenity-item">
+                                        <i class="fas fa-wifi amenity-icon"></i>
+                                        <span>Bepul WiFi</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Rules -->
+                    {% if pool.rules %}
+                        <div class="detail-card mb-4">
+                            <h3 class="section-title">
+                                <i class="fas fa-list-ul me-2 text-primary"></i>Qoidalar
+                            </h3>
+                            <div class="rules-content">
+                                {{ pool.rules|linebreaks }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Gallery -->
+                    {% if images %}
+                        <div class="detail-card">
+                            <h3 class="section-title">
+                                <i class="fas fa-images me-2 text-primary"></i>Rasmlar
+                            </h3>
+                            <div class="row g-3">
+                                {% for image in images %}
+                                    <div class="col-md-4">
+                                        <div class="gallery-item">
+                                            <img src="{{ image.image.url }}" alt="{{ pool.name }}" 
+                                                 class="img-fluid rounded shadow-sm" 
+                                                 data-bs-toggle="modal" 
+                                                 data-bs-target="#imageModal{{ forloop.counter }}">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Image Modal -->
+                                    <div class="modal fade" id="imageModal{{ forloop.counter }}" tabindex="-1">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-body p-0">
+                                                    <img src="{{ image.image.url }}" alt="{{ pool.name }}" class="img-fluid w-100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Booking Sidebar -->
+                <div class="col-lg-4">
+                    <div class="booking-card sticky-top">
+                        <div class="booking-header">
+                            <h4 class="mb-0">
+                                <i class="fas fa-calendar-plus me-2"></i>Buyurtma Berish
+                            </h4>
+                            <div class="price-display">
+                                {{ pool.price_per_hour|floatformat:0 }} so'm<span>/soat</span>
+                            </div>
+                        </div>
+                        
+                        <div class="booking-body">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'book_pool' pool.id %}" class="btn btn-primary btn-lg w-100 mb-3">
+                                    <i class="fas fa-swimming-pool me-2"></i>Hozir Buyurtma Berish
+                                </a>
+                            {% else %}
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Buyurtma berish uchun tizimga kiring
+                                </div>
+                                <a href="{% url 'login' %}" class="btn btn-primary btn-lg w-100 mb-2">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Kirish
+                                </a>
+                                <a href="{% url 'register' %}" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-user-plus me-2"></i>Ro'yxatdan o'tish
+                                </a>
+                            {% endif %}
+                            
+                            <!-- Quick Info -->
+                            <div class="quick-info mt-4">
+                                <h6 class="mb-3">
+                                    <i class="fas fa-bolt me-2 text-warning"></i>Tezkor Ma'lumot
+                                </h6>
+                                <div class="info-item">
+                                    <i class="fas fa-clock text-muted me-2"></i>
+                                    <span>Ish vaqti: {{ pool.opening_time|time:"H:i" }} - {{ pool.closing_time|time:"H:i" }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-users text-muted me-2"></i>
+                                    <span>Maksimal: {{ pool.capacity }} kishi</span>
+                                </div>
+                                {% if pool.children_discount > 0 %}
+                                    <div class="info-item">
+                                        <i class="fas fa-child text-success me-2"></i>
+                                        <span>Bolalar uchun {{ pool.children_discount }}% chegirma</span>
+                                    </div>
+                                {% endif %}
+                                {% if pool.group_discount > 0 %}
+                                    <div class="info-item">
+                                        <i class="fas fa-users text-success me-2"></i>
+                                        <span>Guruh uchun {{ pool.group_discount }}% chegirma</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.pool-hero-section {
+    position: relative;
+    height: 60vh;
+    min-height: 400px;
+    overflow: hidden;
+}
+
+.hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+.pool-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.pool-location {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.pool-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.meta-item {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+    font-weight: 500;
+}
+
+.price-highlight {
+    background: linear-gradient(45deg, #f59e0b, #d97706);
+    font-weight: 600;
+}
+
+.detail-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--dark-color);
+}
+
+.amenity-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: var(--light-color);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.amenity-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.amenity-icon {
+    font-size: 1.5rem;
+    color: var(--success-color);
+    margin-right: 1rem;
+    width: 30px;
+    text-align: center;
+}
+
+.rules-content {
+    background: var(--light-color);
+    padding: 1.5rem;
+    border-radius: 15px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.gallery-item img {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.gallery-item img:hover {
+    transform: scale(1.05);
+}
+
+.booking-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    top: 100px;
+}
+
+.booking-header {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.price-display {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 1rem;
+}
+
+.price-display span {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+.booking-body {
+    padding: 2rem;
+}
+
+.quick-info {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+    .pool-title {
+        font-size: 2rem;
+    }
+    
+    .pool-meta {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .booking-card {
+        position: static !important;
+    }
+}
+</style>
+
+<script>
+// Smooth scroll animations
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate detail cards on scroll
+    const cards = document.querySelectorAll('.detail-card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.6s ease';
+        observer.observe(card);
+    });
+
+    // Parallax effect for hero image
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const heroImage = document.querySelector('.hero-image');
+        if (heroImage) {
+            heroImage.style.transform = `translateY(${scrolled * 0.5}px)`;
+        }
+    });
+});
+</script>
+{% endblock %}

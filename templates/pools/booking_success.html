@@ -1,0 +1,553 @@
+{% extends 'base.html' %}
+
+{% block title %}Buyurtma Muvaffaqiyatli - Poolly{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Success Hero -->
+    <section class="success-hero">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <div class="success-animation">
+                        <div class="checkmark-circle">
+                            <div class="checkmark"></div>
+                        </div>
+                    </div>
+                    <h1 class="success-title">Buyurtma Muvaffaqiyatli!</h1>
+                    <p class="success-subtitle">Sizning buyurtmangiz qabul qilindi va tez orada siz bilan bog'lanamiz</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Details -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="booking-details-card">
+                        <div class="card-header">
+                            <h3 class="mb-0">
+                                <i class="fas fa-receipt me-2"></i>Buyurtma Tafsilotlari
+                            </h3>
+                            <span class="booking-id">ID: {{ booking.booking_id }}</span>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="row g-4">
+                                <!-- Pool Information -->
+                                <div class="col-md-6">
+                                    <div class="info-section">
+                                        <h5 class="section-title">
+                                            <i class="fas fa-swimming-pool me-2 text-primary"></i>Baseyn Ma'lumotlari
+                                        </h5>
+                                        <div class="info-list">
+                                            <div class="info-item">
+                                                <span class="label">Nomi:</span>
+                                                <span class="value">{{ booking.pool.name }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="label">Manzil:</span>
+                                                <span class="value">{{ booking.pool.address }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="label">Soatlik narx:</span>
+                                                <span class="value">{{ booking.pool.price_per_hour|floatformat:0 }} so'm</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Booking Information -->
+                                <div class="col-md-6">
+                                    <div class="info-section">
+                                        <h5 class="section-title">
+                                            <i class="fas fa-calendar-alt me-2 text-primary"></i>Buyurtma Ma'lumotlari
+                                        </h5>
+                                        <div class="info-list">
+                                            <div class="info-item">
+                                                <span class="label">Sana:</span>
+                                                <span class="value">{{ booking.booking_date|date:"d.m.Y" }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="label">Vaqt:</span>
+                                                <span class="value">{{ booking.start_time|time:"H:i" }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="label">Davomiyligi:</span>
+                                                <span class="value">{{ booking.duration_hours }} soat</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="label">Odamlar soni:</span>
+                                                <span class="value">{{ booking.number_of_people }} kishi</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Customer Information -->
+                                <div class="col-md-6">
+                                    <div class="info-section">
+                                        <h5 class="section-title">
+                                            <i class="fas fa-user me-2 text-primary"></i>Mijoz Ma'lumotlari
+                                        </h5>
+                                        <div class="info-list">
+                                            <div class="info-item">
+                                                <span class="label">Ism-familiya:</span>
+                                                <span class="value">{{ booking.customer_name }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="label">Telefon:</span>
+                                                <span class="value">{{ booking.customer_phone }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="label">Manzil:</span>
+                                                <span class="value">{{ booking.customer_address }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="label">Yosh:</span>
+                                                <span class="value">{{ booking.customer_age }} yosh</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Price Information -->
+                                <div class="col-md-6">
+                                    <div class="info-section">
+                                        <h5 class="section-title">
+                                            <i class="fas fa-money-bill-wave me-2 text-primary"></i>Narx Hisoblash
+                                        </h5>
+                                        <div class="price-breakdown">
+                                            <div class="price-item">
+                                                <span class="label">Asosiy narx:</span>
+                                                <span class="value">{{ booking.base_price|floatformat:0 }} so'm</span>
+                                            </div>
+                                            {% if booking.discount_amount > 0 %}
+                                                <div class="price-item discount">
+                                                    <span class="label">Chegirma:</span>
+                                                    <span class="value text-success">-{{ booking.discount_amount|floatformat:0 }} so'm</span>
+                                                </div>
+                                            {% endif %}
+                                            <hr>
+                                            <div class="price-item total">
+                                                <span class="label"><strong>Jami:</strong></span>
+                                                <span class="value"><strong>{{ booking.total_price|floatformat:0 }} so'm</strong></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Special Requests -->
+                                {% if booking.special_requests %}
+                                    <div class="col-12">
+                                        <div class="info-section">
+                                            <h5 class="section-title">
+                                                <i class="fas fa-comment me-2 text-primary"></i>Maxsus So'rovlar
+                                            </h5>
+                                            <div class="special-requests">
+                                                {{ booking.special_requests|linebreaks }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                                <div class="status-info">
+                                    <span class="status-badge status-{{ booking.status }}">
+                                        <i class="fas fa-clock me-1"></i>{{ booking.get_status_display }}
+                                    </span>
+                                    <small class="text-muted ms-2">
+                                        Buyurtma vaqti: {{ booking.created_at|date:"d.m.Y H:i" }}
+                                    </small>
+                                </div>
+                                <div class="action-buttons">
+                                    <a href="{% url 'download_receipt' booking.booking_id %}" class="btn btn-success">
+                                        <i class="fas fa-download me-2"></i>Chek Yuklab Olish
+                                    </a>
+                                    <a href="{% url 'home' %}" class="btn btn-primary">
+                                        <i class="fas fa-home me-2"></i>Bosh Sahifa
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Next Steps -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="next-steps-card">
+                        <h4 class="text-center mb-4">
+                            <i class="fas fa-list-ol me-2 text-primary"></i>Keyingi Qadamlar
+                        </h4>
+                        <div class="steps-list">
+                            <div class="step-item">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h6>Tasdiqlash</h6>
+                                    <p>Adminlarimiz sizning buyurtmangizni ko'rib chiqadi va 30 daqiqa ichida telefon orqali bog'lanadi.</p>
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h6>To'lov</h6>
+                                    <p>Buyurtma tasdiqlangandan so'ng, to'lov usuli haqida ma'lumot beriladi.</p>
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h6>Suzish</h6>
+                                    <p>Belgilangan vaqtda baseynda bo'ling va dam oling!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.success-hero {
+    background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+    padding: 100px 0 80px;
+    color: white;
+}
+
+.success-animation {
+    margin-bottom: 2rem;
+}
+
+.checkmark-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 0 auto 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: scaleIn 0.6s ease-out;
+}
+
+.checkmark {
+    width: 40px;
+    height: 40px;
+    position: relative;
+}
+
+.checkmark::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 18px;
+    width: 8px;
+    height: 16px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    animation: checkmarkDraw 0.4s ease-out 0.2s both;
+}
+
+.success-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    animation: fadeInUp 0.6s ease-out 0.3s both;
+}
+
+.success-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+
+.booking-details-card {
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-top: -50px;
+    position: relative;
+    z-index: 2;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 2rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.booking-id {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.info-section {
+    background: #f8fafc;
+    border-radius: 15px;
+    padding: 1.5rem;
+    height: 100%;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item .label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    flex: 1;
+}
+
+.info-item .value {
+    font-weight: 600;
+    color: var(--dark-color);
+    text-align: right;
+    flex: 1;
+}
+
+.price-breakdown {
+    background: white;
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.price-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.price-item.total {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.special-requests {
+    background: white;
+    border-radius: 10px;
+    padding: 1rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.card-footer {
+    background: #f8fafc;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-confirmed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.status-completed {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.next-steps-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.step-content h6 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+}
+
+.step-content p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes checkmarkDraw {
+    0% {
+        height: 0;
+    }
+    100% {
+        height: 16px;
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .success-title {
+        font-size: 2rem;
+    }
+    
+    .card-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .action-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .action-buttons .btn {
+        flex: 1;
+    }
+    
+    .status-info {
+        text-align: center;
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate info sections
+    const sections = document.querySelectorAll('.info-section');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 100);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    sections.forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(30px)';
+        section.style.transition = 'all 0.6s ease';
+        observer.observe(section);
+    });
+
+    // Auto-scroll to details after animation
+    setTimeout(() => {
+        document.querySelector('.booking-details-card').scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }, 1500);
+});
+</script>
+{% endblock %}

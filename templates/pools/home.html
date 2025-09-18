@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block title %}Poolly - O'zbekistondagi Eng Yaxshi Baseynlar{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="hero-title">🏊‍♂️ Poolly</h1>
+                <p class="hero-subtitle">O'zbekistondagi eng yaxshi baseynlarni onlayn bron qiling</p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="{% url 'pool_list' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-swimming-pool me-2"></i>Baseynlarni ko'rish
+                    </a>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Ro'yxatdan o'tish
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <h4 class="text-center mb-4">
+                            <i class="fas fa-search me-2 text-primary"></i>Baseyn qidirish
+                        </h4>
+                        <form method="GET" action="{% url 'pool_list' %}">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <input type="text" name="search" class="form-control" 
+                                           placeholder="Baseyn nomi yoki manzil..." 
+                                           value="{{ search_query }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search me-2"></i>Qidirish
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Pools -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">🌟 Mashhur Baseynlar</h2>
+            <p class="lead text-muted">Eng ko'p tanlanadigan baseynlarimiz</p>
+        </div>
+        
+        {% if pools %}
+            <div class="row g-4">
+                {% for pool in pools %}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card pool-card h-100">
+                            {% if pool.images.all %}
+                                {% for image in pool.images.all %}
+                                    {% if image.is_main %}
+                                        <img src="{{ image.image.url }}" class="card-img-top" alt="{{ pool.name }}">
+                                    {% endif %}
+                                {% empty %}
+                                    <img src="https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg" 
+                                         class="card-img-top" alt="{{ pool.name }}">
+                                {% endfor %}
+                            {% else %}
+                                <img src="https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg" 
+                                     class="card-img-top" alt="{{ pool.name }}">
+                            {% endif %}
+                            
+                            <div class="price-badge">
+                                {{ pool.price_per_hour|floatformat:0 }} so'm/soat
+                            </div>
+                            
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ pool.name }}</h5>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-map-marker-alt me-1"></i>{{ pool.address }}
+                                </p>
+                                <p class="text-muted mb-3">
+                                    <i class="fas fa-users me-1"></i>{{ pool.capacity }} kishi
+                                    <span class="ms-3">
+                                        <i class="fas fa-clock me-1"></i>{{ pool.opening_time|time:"H:i" }} - {{ pool.closing_time|time:"H:i" }}
+                                    </span>
+                                </p>
+                                
+                                <!-- Amenities -->
+                                <div class="mb-3">
+                                    {% if pool.has_sauna %}
+                                        <span class="badge bg-success me-1">
+                                            <i class="fas fa-hot-tub amenity-icon"></i>Sauna
+                                        </span>
+                                    {% endif %}
+                                    {% if pool.has_cafe %}
+                                        <span class="badge bg-success me-1">
+                                            <i class="fas fa-coffee amenity-icon"></i>Kafe
+                                        </span>
+                                    {% endif %}
+                                    {% if pool.has_sports_area %}
+                                        <span class="badge bg-success me-1">
+                                            <i class="fas fa-dumbbell amenity-icon"></i>Sport
+                                        </span>
+                                    {% endif %}
+                                    {% if pool.has_parking %}
+                                        <span class="badge bg-success me-1">
+                                            <i class="fas fa-car amenity-icon"></i>Parking
+                                        </span>
+                                    {% endif %}
+                                    {% if pool.has_wifi %}
+                                        <span class="badge bg-success me-1">
+                                            <i class="fas fa-wifi amenity-icon"></i>WiFi
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mt-auto">
+                                    <div class="d-grid gap-2">
+                                        <a href="{% url 'pool_detail' pool.id %}" class="btn btn-outline-primary">
+                                            <i class="fas fa-info-circle me-2"></i>Batafsil
+                                        </a>
+                                        {% if user.is_authenticated %}
+                                            <a href="{% url 'book_pool' pool.id %}" class="btn btn-primary">
+                                                <i class="fas fa-calendar-plus me-2"></i>Buyurtma berish
+                                            </a>
+                                        {% else %}
+                                            <a href="{% url 'login' %}" class="btn btn-primary">
+                                                <i class="fas fa-sign-in-alt me-2"></i>Kirish kerak
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center mt-5">
+                <a href="{% url 'pool_list' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-swimming-pool me-2"></i>Barcha baseynlarni ko'rish
+                </a>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-swimming-pool fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">Hozircha baseynlar yo'q</h4>
+                <p class="text-muted">Tez orada yangi baseynlar qo'shiladi!</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">🚀 Nega Poolly?</h2>
+            <p class="lead text-muted">Bizning afzalliklarimiz</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-clock fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">24/7 Onlayn Bron</h5>
+                        <p class="card-text">Istalgan vaqtda, istalgan joydan baseyn bron qiling. Tez va oson!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-shield-alt fa-3x text-success"></i>
+                        </div>
+                        <h5 class="card-title">Ishonchli To'lov</h5>
+                        <p class="card-text">Xavfsiz to'lov tizimlari va to'liq ma'lumotlar himoyasi.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-star fa-3x text-warning"></i>
+                        </div>
+                        <h5 class="card-title">Sifatli Xizmat</h5>
+                        <p class="card-text">Faqat eng yaxshi va tekshirilgan baseynlar. Sifat kafolati!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h3 class="mb-2">Bugun-oq suzishni boshlang! 🏊‍♂️</h3>
+                <p class="mb-0">Ro'yxatdan o'ting va birinchi buyurtmangizga 10% chegirma oling!</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'register' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Ro'yxatdan o'tish
+                    </a>
+                {% else %}
+                    <a href="{% url 'pool_list' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-swimming-pool me-2"></i>Baseyn tanlash
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+    
+    // Add animation on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all cards
+    document.querySelectorAll('.card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+    });
+</script>
+{% endblock %}

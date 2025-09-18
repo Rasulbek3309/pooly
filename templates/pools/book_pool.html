@@ -1,0 +1,437 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ pool.name }} - Buyurtma Berish - Poolly{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Booking Hero -->
+    <section class="booking-hero">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1 class="hero-title">
+                        <i class="fas fa-calendar-plus me-3"></i>Buyurtma Berish
+                    </h1>
+                    <p class="hero-subtitle">{{ pool.name }} uchun buyurtma bering</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Form -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="booking-form-card">
+                        <div class="form-header">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h3 class="mb-1">{{ pool.name }}</h3>
+                                    <p class="text-muted mb-0">
+                                        <i class="fas fa-map-marker-alt me-1"></i>{{ pool.address }}
+                                    </p>
+                                </div>
+                                <div class="col-md-4 text-md-end">
+                                    <div class="price-info">
+                                        <span class="price">{{ pool.price_per_hour|floatformat:0 }} so'm</span>
+                                        <small class="text-muted d-block">soatiga</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form method="POST" class="booking-form" id="bookingForm">
+                            {% csrf_token %}
+                            
+                            <!-- Booking Details -->
+                            <div class="form-section">
+                                <h5 class="section-title">
+                                    <i class="fas fa-clock me-2 text-primary"></i>Buyurtma Tafsilotlari
+                                </h5>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Sana *</label>
+                                        <input type="date" name="booking_date" class="form-control" required id="id_booking_date">
+                                        {% if form.booking_date.errors %}
+                                            <div class="text-danger small">{{ form.booking_date.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Boshlanish vaqti *</label>
+                                        <input type="time" name="start_time" class="form-control" required id="id_start_time">
+                                        {% if form.start_time.errors %}
+                                            <div class="text-danger small">{{ form.start_time.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Davomiyligi *</label>
+                                        <select name="duration_hours" class="form-select" required id="id_duration_hours">
+                                            <option value="1">1 soat</option>
+                                            <option value="2">2 soat</option>
+                                            <option value="3">3 soat</option>
+                                            <option value="4">4 soat</option>
+                                            <option value="5">5 soat</option>
+                                        </select>
+                                        {% if form.duration_hours.errors %}
+                                            <div class="text-danger small">{{ form.duration_hours.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Odamlar soni *</label>
+                                        <input type="number" name="number_of_people" min="1" class="form-control" required id="id_number_of_people">
+                                        {% if form.number_of_people.errors %}
+                                            <div class="text-danger small">{{ form.number_of_people.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Customer Information -->
+                            <div class="form-section">
+                                <h5 class="section-title">
+                                    <i class="fas fa-user me-2 text-primary"></i>Shaxsiy Ma'lumotlar
+                                </h5>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">To'liq ism-familiya *</label>
+                                        <input type="text" name="customer_name" class="form-control" required id="id_customer_name">
+                                        {% if form.customer_name.errors %}
+                                            <div class="text-danger small">{{ form.customer_name.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Telefon raqam *</label>
+                                        <input type="tel" name="customer_phone" class="form-control" required id="id_customer_phone">
+                                        {% if form.customer_phone.errors %}
+                                            <div class="text-danger small">{{ form.customer_phone.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label class="form-label">Manzil *</label>
+                                        <input type="text" name="customer_address" class="form-control" required id="id_customer_address">
+                                        {% if form.customer_address.errors %}
+                                            <div class="text-danger small">{{ form.customer_address.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Yosh *</label>
+                                        <input type="number" name="customer_age" min="1" class="form-control" required id="id_customer_age">
+                                        {% if form.customer_age.errors %}
+                                            <div class="text-danger small">{{ form.customer_age.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Maxsus so'rovlar</label>
+                                        <textarea name="special_requests" class="form-control" rows="3" id="id_special_requests"></textarea>
+                                        {% if form.special_requests.errors %}
+                                            <div class="text-danger small">{{ form.special_requests.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Price Calculation -->
+                            <div class="price-calculation">
+                                <h5 class="section-title">
+                                    <i class="fas fa-calculator me-2 text-primary"></i>Narx Hisoblash
+                                </h5>
+                                
+                                <div class="calculation-details">
+                                    <div class="calc-row">
+                                        <span>Asosiy narx:</span>
+                                        <span id="basePrice">0 so'm</span>
+                                    </div>
+                                    <div class="calc-row discount-row" id="discountRow" style="display: none;">
+                                        <span>Chegirma:</span>
+                                        <span id="discountAmount" class="text-success">-0 so'm</span>
+                                    </div>
+                                    <hr>
+                                    <div class="calc-row total-row">
+                                        <span><strong>Jami:</strong></span>
+                                        <span id="totalPrice"><strong>0 so'm</strong></span>
+                                    </div>
+                                </div>
+
+                                <!-- Discount Info -->
+                                <div class="discount-info">
+                                    {% if pool.children_discount > 0 %}
+                                        <div class="discount-item">
+                                            <i class="fas fa-child text-success me-2"></i>
+                                            <span>18 yoshgacha: {{ pool.children_discount }}% chegirma</span>
+                                        </div>
+                                    {% endif %}
+                                    {% if pool.group_discount > 0 %}
+                                        <div class="discount-item">
+                                            <i class="fas fa-users text-success me-2"></i>
+                                            <span>5+ kishi: {{ pool.group_discount }}% chegirma</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="form-actions">
+                                <a href="{% url 'pool_detail' pool.id %}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-arrow-left me-2"></i>Orqaga
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                    <i class="fas fa-check me-2"></i>Buyurtma Berish
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.booking-hero {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    padding: 100px 0 60px;
+    color: white;
+}
+
+.booking-form-card {
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-top: -50px;
+    position: relative;
+    z-index: 2;
+}
+
+.form-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 2rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.price-info .price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4f46e5;
+}
+
+.booking-form {
+    padding: 2rem;
+}
+
+.form-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+}
+
+.price-calculation {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.calculation-details {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.calc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.calc-row:last-child {
+    margin-bottom: 0;
+}
+
+.total-row {
+    font-size: 1.1rem;
+    color: #4f46e5;
+}
+
+.discount-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.discount-item {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    padding-top: 2rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.btn-lg {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 15px;
+}
+
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+    
+    .booking-form-card {
+        margin: 1rem;
+        margin-top: -30px;
+    }
+}
+
+/* Loading animation */
+.btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('bookingForm');
+    const durationSelect = document.getElementById('id_duration_hours');
+    const peopleInput = document.getElementById('id_number_of_people');
+    const ageInput = document.getElementById('id_customer_age');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    const basePrice = {{ pool.price_per_hour }};
+    const childrenDiscount = {{ pool.children_discount }};
+    const groupDiscount = {{ pool.group_discount }};
+    
+    function calculatePrice() {
+        const duration = parseInt(durationSelect.value) || 0;
+        const people = parseInt(peopleInput.value) || 0;
+        const age = parseInt(ageInput.value) || 0;
+        
+        const totalBasePrice = basePrice * duration;
+        let discountPercent = 0;
+        
+        // Children discount
+        if (age < 18 && childrenDiscount > 0) {
+            discountPercent += childrenDiscount;
+        }
+        
+        // Group discount
+        if (people >= 5 && groupDiscount > 0) {
+            discountPercent += groupDiscount;
+        }
+        
+        const discountAmount = (totalBasePrice * discountPercent) / 100;
+        const finalPrice = totalBasePrice - discountAmount;
+        
+        // Update display
+        document.getElementById('basePrice').textContent = totalBasePrice.toLocaleString('ru-RU') + ' so\'m';
+        
+        const discountRow = document.getElementById('discountRow');
+        if (discountAmount > 0) {
+            discountRow.style.display = 'flex';
+            document.getElementById('discountAmount').textContent = '-' + discountAmount.toLocaleString('ru-RU') + ' so\'m';
+        } else {
+            discountRow.style.display = 'none';
+        }
+        
+        document.getElementById('totalPrice').innerHTML = '<strong>' + finalPrice.toLocaleString('ru-RU') + ' so\'m</strong>';
+    }
+    
+    // Event listeners
+    durationSelect.addEventListener('change', calculatePrice);
+    peopleInput.addEventListener('input', calculatePrice);
+    ageInput.addEventListener('input', calculatePrice);
+    
+    // Initial calculation
+    calculatePrice();
+    
+    // Form submission with loading
+    form.addEventListener('submit', function(e) {
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+    });
+    
+    // Animate form sections
+    const sections = document.querySelectorAll('.form-section, .price-calculation');
+    sections.forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(30px)';
+        section.style.transition = 'all 0.6s ease';
+        
+        setTimeout(() => {
+            section.style.opacity = '1';
+            section.style.transform = 'translateY(0)';
+        }, 100);
+    });
+});
+</script>
+{% endblock %}

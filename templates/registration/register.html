@@ -1,0 +1,648 @@
+{% extends 'base.html' %}
+
+{% block title %}Ro'yxatdan O'tish - Poolly{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Register Hero -->
+    <section class="auth-hero">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6 col-md-8">
+                    <div class="auth-card">
+                        <div class="auth-header">
+                            <div class="auth-logo">
+                                <i class="fas fa-swimming-pool"></i>
+                            </div>
+                            <h2>Ro'yxatdan O'ting</h2>
+                            <p>Hisobingizni yarating va suzish olamiga qo'shiling</p>
+                        </div>
+
+                        <form method="POST" class="auth-form" id="registerForm">
+                            {% csrf_token %}
+                            
+                            {% if form.errors %}
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    <ul class="mb-0">
+                                        {% for field, errors in form.errors.items %}
+                                            {% for error in errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+
+                            <!-- Personal Information -->
+                            <div class="form-section">
+                                <h5 class="section-title">
+                                    <i class="fas fa-user me-2"></i>Shaxsiy Ma'lumotlar
+                                </h5>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Ism *</label>
+                                            {{ form.first_name }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Familiya *</label>
+                                            {{ form.last_name }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label class="form-label">Email *</label>
+                                            {{ form.email }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="form-label">Yosh</label>
+                                            {{ form.age }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Telefon *</label>
+                                            {{ form.phone }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Manzil *</label>
+                                            {{ form.address }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Account Information -->
+                            <div class="form-section">
+                                <h5 class="section-title">
+                                    <i class="fas fa-key me-2"></i>Hisob Ma'lumotlari
+                                </h5>
+                                
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Foydalanuvchi nomi *</label>
+                                            {{ form.username }}
+                                            <small class="form-text">Faqat harflar, raqamlar va @/./+/-/_ belgilar</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Parol *</label>
+                                            <div class="password-input">
+                                                {{ form.password1 }}
+                                                <button type="button" class="password-toggle" onclick="togglePassword('id_password1', 'passwordIcon1')">
+                                                    <i class="fas fa-eye" id="passwordIcon1"></i>
+                                                </button>
+                                            </div>
+                                            <div class="password-strength" id="passwordStrength"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Parolni Takrorlang *</label>
+                                            <div class="password-input">
+                                                {{ form.password2 }}
+                                                <button type="button" class="password-toggle" onclick="togglePassword('id_password2', 'passwordIcon2')">
+                                                    <i class="fas fa-eye" id="passwordIcon2"></i>
+                                                </button>
+                                            </div>
+                                            <div class="password-match" id="passwordMatch"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Terms and Conditions -->
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                    <label class="form-check-label" for="agreeTerms">
+                                        Men <a href="#" class="text-primary">Foydalanish Shartlari</a> va 
+                                        <a href="#" class="text-primary">Maxfiylik Siyosati</a> bilan tanishdim va roziman
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 auth-submit">
+                                <i class="fas fa-user-plus me-2"></i>Ro'yxatdan O'tish
+                            </button>
+                        </form>
+
+                        <div class="auth-divider">
+                            <span>yoki</span>
+                        </div>
+
+                        <div class="auth-footer">
+                            <p>Hisobingiz bormi?</p>
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg w-100">
+                                <i class="fas fa-sign-in-alt me-2"></i>Kirish
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.auth-hero {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    display: flex;
+    align-items: center;
+    padding: 2rem 0;
+}
+
+.auth-card {
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    animation: slideUp 0.8s ease-out;
+}
+
+.auth-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+}
+
+.auth-logo {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.8rem;
+    color: white;
+    animation: logoFloat 2s ease-in-out infinite;
+}
+
+.auth-header h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.auth-form {
+    padding: 2rem;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control {
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    width: 100%;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+    background: white;
+}
+
+.form-text {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.password-input {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.password-toggle:hover {
+    background: #f1f5f9;
+    color: var(--primary-color);
+}
+
+.password-strength {
+    margin-top: 0.5rem;
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.password-strength::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 0;
+    background: #ef4444;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.password-strength.weak::after {
+    width: 33%;
+    background: #ef4444;
+}
+
+.password-strength.medium::after {
+    width: 66%;
+    background: #f59e0b;
+}
+
+.password-strength.strong::after {
+    width: 100%;
+    background: #10b981;
+}
+
+.password-match {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.password-match.match {
+    color: var(--success-color);
+}
+
+.password-match.no-match {
+    color: var(--error-color);
+}
+
+.form-check {
+    margin-bottom: 1.5rem;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-check-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.auth-submit {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+}
+
+.auth-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.auth-divider {
+    position: relative;
+    text-align: center;
+    margin: 1.5rem 0;
+    padding: 0 2rem;
+}
+
+.auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 2rem;
+    right: 2rem;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+.auth-divider span {
+    background: white;
+    padding: 0 1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.auth-footer {
+    padding: 0 2rem 2rem;
+    text-align: center;
+}
+
+.auth-footer p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+}
+
+.alert {
+    border-radius: 12px;
+    border: none;
+    margin-bottom: 1.5rem;
+}
+
+.alert-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.alert ul {
+    list-style: none;
+    padding: 0;
+}
+
+.alert li {
+    margin-bottom: 0.25rem;
+}
+
+/* Loading state */
+.auth-submit.loading {
+    color: transparent;
+}
+
+.auth-submit.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes logoFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+    .auth-hero {
+        padding: 1rem 0;
+    }
+    
+    .auth-card {
+        margin: 1rem;
+        border-radius: 20px;
+    }
+    
+    .auth-header {
+        padding: 2rem 1.5rem 1.5rem;
+    }
+    
+    .auth-form {
+        padding: 1.5rem;
+    }
+    
+    .auth-footer {
+        padding: 0 1.5rem 1.5rem;
+    }
+}
+</style>
+
+<script>
+function togglePassword(inputId, iconId) {
+    const passwordInput = document.getElementById(inputId);
+    const passwordIcon = document.getElementById(iconId);
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        passwordIcon.classList.remove('fa-eye');
+        passwordIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        passwordIcon.classList.remove('fa-eye-slash');
+        passwordIcon.classList.add('fa-eye');
+    }
+}
+
+function checkPasswordStrength(password) {
+    let strength = 0;
+    
+    if (password.length >= 8) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+    
+    return strength;
+}
+
+function updatePasswordStrength(password) {
+    const strengthBar = document.getElementById('passwordStrength');
+    const strength = checkPasswordStrength(password);
+    
+    strengthBar.className = 'password-strength';
+    
+    if (strength <= 2) {
+        strengthBar.classList.add('weak');
+    } else if (strength <= 3) {
+        strengthBar.classList.add('medium');
+    } else {
+        strengthBar.classList.add('strong');
+    }
+}
+
+function checkPasswordMatch() {
+    const password1 = document.getElementById('id_password1').value;
+    const password2 = document.getElementById('id_password2').value;
+    const matchIndicator = document.getElementById('passwordMatch');
+    
+    if (password2.length === 0) {
+        matchIndicator.textContent = '';
+        matchIndicator.className = 'password-match';
+        return;
+    }
+    
+    if (password1 === password2) {
+        matchIndicator.textContent = '✓ Parollar mos keladi';
+        matchIndicator.className = 'password-match match';
+    } else {
+        matchIndicator.textContent = '✗ Parollar mos kelmaydi';
+        matchIndicator.className = 'password-match no-match';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('registerForm');
+    const submitBtn = document.querySelector('.auth-submit');
+    const password1 = document.getElementById('id_password1');
+    const password2 = document.getElementById('id_password2');
+    const agreeTerms = document.getElementById('agreeTerms');
+    
+    // Password strength checker
+    password1.addEventListener('input', function() {
+        updatePasswordStrength(this.value);
+        checkPasswordMatch();
+    });
+    
+    // Password match checker
+    password2.addEventListener('input', checkPasswordMatch);
+    
+    // Form validation
+    function validateForm() {
+        const password1Value = password1.value;
+        const password2Value = password2.value;
+        const termsChecked = agreeTerms.checked;
+        
+        let isValid = true;
+        
+        if (password1Value !== password2Value) {
+            isValid = false;
+        }
+        
+        if (!termsChecked) {
+            isValid = false;
+        }
+        
+        if (checkPasswordStrength(password1Value) < 2) {
+            isValid = false;
+        }
+        
+        submitBtn.disabled = !isValid;
+        return isValid;
+    }
+    
+    // Real-time validation
+    [password1, password2, agreeTerms].forEach(input => {
+        input.addEventListener('input', validateForm);
+        input.addEventListener('change', validateForm);
+    });
+    
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        if (!validateForm()) {
+            e.preventDefault();
+            return;
+        }
+        
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+    });
+    
+    // Input animations
+    const inputs = document.querySelectorAll('.form-control');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        
+        input.addEventListener('blur', function() {
+            if (!this.value) {
+                this.parentElement.classList.remove('focused');
+            }
+        });
+    });
+    
+    // Initial validation
+    validateForm();
+});
+</script>
+{% endblock %}
