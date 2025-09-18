@@ -1,1 +1,1 @@
-web: gunicorn pooly.wsgi
+web: gunicorn polly.wsgi
