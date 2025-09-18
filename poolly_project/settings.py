@@ -8,7 +8,8 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here'
 
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -98,3 +99,4 @@ TELEGRAM_ADMIN_CHAT_ID = config('TELEGRAM_ADMIN_CHAT_ID', default='')
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
